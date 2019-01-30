@@ -1,0 +1,23 @@
+PODS:
+  - SDWebImage/Core (5.0.0-beta4)
+  - SDWebImageFLIFCoder (0.1.0):
+    - SDWebImage/Core (>= 5.0.0-beta4)
+
+DEPENDENCIES:
+  - SDWebImageFLIFCoder (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - SDWebImage
+
+EXTERNAL SOURCES:
+  SDWebImageFLIFCoder:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SDWebImage: 56bfe1114b11f1d5766d6d0e3b3456cfd7e1e8b7
+  SDWebImageFLIFCoder: 29ebf63fecf0749524feaf813f161518cadb0cb2
+
+PODFILE CHECKSUM: dc66a94f7dffebb742dc5e75405c3c3219ddf107
+
+COCOAPODS: 1.5.3

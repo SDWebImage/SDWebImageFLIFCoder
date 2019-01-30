@@ -1,0 +1,6 @@
+framework module SDWebImageFLIFCoder {
+  umbrella header "SDWebImageFLIFCoder.h"
+
+  export *
+  module * { export * }
+}

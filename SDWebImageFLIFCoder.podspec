@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'SDWebImageFLIFCoder'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of SDWebImageFLIFCoder.'
+  s.summary          = 'A FLIF(Free Lossless Image Format) coder plugin for SDWebImage.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -29,14 +29,20 @@ TODO: Add long description of the pod here.
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
+  s.osx.deployment_target = '10.10'
+  s.tvos.deployment_target = '9.0'
+  s.watchos.deployment_target = '2.0'
 
-  s.source_files = 'SDWebImageFLIFCoder/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'SDWebImageFLIFCoder' => ['SDWebImageFLIFCoder/Assets/*.png']
-  # }
+  s.module_map = 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.modulemap'
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.source_files = 'SDWebImageFLIFCoder/Classes/**/*', 'Vendor/libflif/include/*.h', 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.h'
+  s.public_header_files = 'SDWebImageFLIFCoder/Classes/SDImageFLIFCoder.h', 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.h'
+
+  s.ios.vendored_libraries = 'Vendor/libflif/lib/ios/libflif.a'
+  s.osx.vendored_libraries = 'Vendor/libflif/lib/mac/libflif.a'
+  s.tvos.vendored_libraries = 'Vendor/libflif/lib/tvos/libflif.a'
+  s.watchos.vendored_libraries = 'Vendor/libflif/lib/watchos/libflif.a'
+
+  s.libraries = 'c++'
+  s.dependency 'SDWebImage/Core', '>= 5.0.0-beta4'
 end
