@@ -11,6 +11,7 @@
 #else
 #import "flif.h"
 #endif
+#import <Accelerate/Accelerate.h>
 
 #define SD_FOUR_CC(c1,c2,c3,c4) ((uint32_t)(((c4) << 24) | ((c3) << 16) | ((c2) << 8) | (c1)))
 
@@ -99,7 +100,7 @@ static void FreeImageData(void *info, const void *data, size_t size) {
             UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:kCGImagePropertyOrientationUp];
 #endif
             CGImageRelease(imageRef);
-            // libflif duration is milliseconds
+            // libflif frame duration is milliseconds
             NSTimeInterval duration = [self sd_frameDurationWithFLIFImage:flifimage];
             SDImageFrame *frame = [SDImageFrame frameWithImage:image duration:duration];
             [frames addObject:frame];
@@ -169,28 +170,6 @@ static void FreeImageData(void *info, const void *data, size_t size) {
     return duration / 1000.0;
 }
 
-#pragma mark - Progressive Decode
-
-- (BOOL)canIncrementalDecodeFromData:(NSData *)data {
-    return [[self class] isFLIFFormatForData:data];
-}
-
-- (instancetype)initIncrementalWithOptions:(SDImageCoderOptions *)options {
-    self = [super init];
-    if (self) {
-        
-    }
-    return self;
-}
-
-- (void)updateIncrementalData:(NSData *)data finished:(BOOL)finished {
-    ;
-}
-
-- (UIImage *)incrementalDecodedImageWithOptions:(SDImageCoderOptions *)options {
-    return nil;
-}
-
 #pragma mark - Encode
 
 - (BOOL)canEncodeToFormat:(SDImageFormat)format {
@@ -201,7 +180,157 @@ static void FreeImageData(void *info, const void *data, size_t size) {
 }
 
 - (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format options:(SDImageCoderOptions *)options {
-    return nil;
+    if (!image) {
+        return nil;
+    }
+    double compressionQuality = 1;
+    if (options[SDImageCoderEncodeCompressionQuality]) {
+        compressionQuality = [options[SDImageCoderEncodeCompressionQuality] doubleValue];
+    }
+    BOOL encodeFirstFrame = [options[SDImageCoderEncodeFirstFrameOnly] boolValue];
+    
+    return [self sd_encodedFLIFDataWithImage:image quality:compressionQuality encodeFirstFrame:encodeFirstFrame];
+}
+
+- (nullable NSData *)sd_encodedFLIFDataWithImage:(nonnull UIImage *)image quality:(double)quality encodeFirstFrame:(BOOL)encodeFirstFrame {
+    
+    FLIF_ENCODER *encoder = flif_create_encoder();
+    if (!encoder) {
+        return nil;
+    }
+    
+    // libflif 0 means lossless (1.0 for our quality), and 100 means max compression (0.0 for our quality)
+    int32_t loss = (1 - quality) * 100;
+    flif_encoder_set_lossy(encoder, loss);
+    /**
+     This is the option to fix the issue due to old version. We keep it as a property.
+     "This animated FLIF will probably not be properly decoded by older FLIF decoders (version < 0.3) since they have a bug in this particular combination of transformations.
+     If backwards compatibility is important, you can use the option -B to avoid the issue"
+     */
+    flif_encoder_set_auto_color_buckets(encoder, !self.disableColorBuckets);
+    
+    NSArray<SDImageFrame *> *frames = [SDImageCoderHelper framesFromAnimatedImage:image];
+    
+    if (encodeFirstFrame || frames.count == 0) {
+        // for static FLIF image
+        FLIF_IMAGE *flifimage = [self sd_encodedFLIFFrameWithImage:image];
+        if (!flifimage) {
+            flif_destroy_encoder(encoder);
+            return nil;
+        }
+        flif_encoder_add_image(encoder, flifimage);
+        flif_destroy_image(flifimage);
+    } else {
+        // for aniamted FLIF image
+        for (size_t i = 0; i < frames.count; i++) {
+            @autoreleasepool {
+                SDImageFrame *currentFrame = frames[i];
+                FLIF_IMAGE *flifimage = [self sd_encodedFLIFFrameWithImage:currentFrame.image];
+                if (!flifimage) {
+                    flif_destroy_encoder(encoder);
+                    return nil;
+                }
+                // libflif frame duration is milliseconds
+                uint32_t delay = currentFrame.duration * 1000;
+                flif_image_set_frame_delay(flifimage, delay);
+                flif_encoder_add_image(encoder, flifimage);
+                flif_destroy_image(flifimage);
+            }
+        }
+    }
+    
+    void *dataBuffer;
+    size_t dataSize;
+    
+    int32_t result = flif_encoder_encode_memory(encoder, &dataBuffer, &dataSize);
+    flif_destroy_encoder(encoder);
+    if (!result) {
+        return nil;
+    }
+    
+    NSData *data = [NSData dataWithBytes:dataBuffer length:dataSize];
+    free(dataBuffer);
+    
+    return data;
+}
+
+- (FLIF_IMAGE *)sd_encodedFLIFFrameWithImage:(nonnull UIImage *)image {
+    CGImageRef imageRef = image.CGImage;
+    if (!imageRef) {
+        return nil;
+    }
+    
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
+    CGImageAlphaInfo alphaInfo = bitmapInfo & kCGBitmapAlphaInfoMask;
+    BOOL hasAlpha = !(alphaInfo == kCGImageAlphaNone ||
+                      alphaInfo == kCGImageAlphaNoneSkipFirst ||
+                      alphaInfo == kCGImageAlphaNoneSkipLast);
+    
+    // libheif supports RGB888/RGBA8888 color mode, convert all to this
+    vImageConverterRef convertor = NULL;
+    vImage_Error v_error = kvImageNoError;
+    
+    vImage_CGImageFormat srcFormat = {
+        .bitsPerComponent = (uint32_t)CGImageGetBitsPerComponent(imageRef),
+        .bitsPerPixel = (uint32_t)CGImageGetBitsPerPixel(imageRef),
+        .colorSpace = CGImageGetColorSpace(imageRef),
+        .bitmapInfo = bitmapInfo
+    };
+    vImage_CGImageFormat destFormat = {
+        .bitsPerComponent = 8,
+        .bitsPerPixel = hasAlpha ? 32 : 24,
+        .colorSpace = [SDImageCoderHelper colorSpaceGetDeviceRGB],
+        .bitmapInfo = hasAlpha ? kCGImageAlphaLast | kCGBitmapByteOrderDefault : kCGImageAlphaNone | kCGBitmapByteOrderDefault // RGB888/RGBA8888 (Non-premultiplied to works for libwebp)
+    };
+    
+    convertor = vImageConverter_CreateWithCGImageFormat(&srcFormat, &destFormat, NULL, kvImageNoFlags, &v_error);
+    if (v_error != kvImageNoError) {
+        return nil;
+    }
+    
+    vImage_Buffer src;
+    v_error = vImageBuffer_InitWithCGImage(&src, &srcFormat, NULL, imageRef, kvImageNoFlags);
+    if (v_error != kvImageNoError) {
+        return nil;
+    }
+    vImage_Buffer dest = {
+        .width = width,
+        .height = height,
+        .rowBytes = bytesPerRow,
+        .data = malloc(height * bytesPerRow) // It seems that libheif does not keep 32/64 byte alignment, however, vImage's `vImageBuffer_Init` does. So manually alloc buffer
+    };
+    if (!dest.data) {
+        free(src.data);
+        vImageConverter_Release(convertor);
+        return nil;
+    }
+    
+    // Convert input color mode to RGB888/RGBA8888
+    v_error = vImageConvert_AnyToAny(convertor, &src, &dest, NULL, kvImageNoFlags);
+    vImageConverter_Release(convertor);
+    if (v_error != kvImageNoError) {
+        free(src.data);
+        free(dest.data);
+        return nil;
+    }
+    
+    free(src.data);
+    void * rgba = dest.data; // Converted buffer
+    
+    FLIF_IMAGE *flifimage;
+    if (hasAlpha) {
+        flifimage = flif_import_image_RGBA((uint32_t)width, (uint32_t)height, rgba, (uint32_t)bytesPerRow);
+    } else {
+        flifimage = flif_import_image_RGB((uint32_t)width, (uint32_t)height, rgba, (uint32_t)bytesPerRow);
+    }
+    
+    // free the rgba buffer
+    free(rgba);
+    
+    return flifimage;
 }
 
 #pragma mark - Helper
