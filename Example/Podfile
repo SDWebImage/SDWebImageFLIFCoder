@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '8.0'
+
+target 'SDWebImageFLIFCoder_Example' do
+  pod 'SDWebImageFLIFCoder', :path => '../'
+
+  target 'SDWebImageFLIFCoder_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
