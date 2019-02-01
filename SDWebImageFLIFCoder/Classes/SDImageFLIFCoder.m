@@ -19,7 +19,24 @@ static void FreeImageData(void *info, const void *data, size_t size) {
     free((void *)data);
 }
 
-@implementation SDImageFLIFCoder
+@implementation SDImageFLIFCoder {
+    FLIF_DECODER * _decoder;
+    FLIF_INFO * _flifinfo;
+    NSData *_imageData;
+    CGFloat _scale;
+    BOOL _finished;
+}
+
+- (void)dealloc {
+    if (_decoder) {
+        flif_destroy_decoder(_decoder);
+        _decoder = NULL;
+    }
+    if (_flifinfo) {
+        flif_destroy_info(_flifinfo);
+        _flifinfo = NULL;
+    }
+}
 
 + (SDImageFLIFCoder *)sharedCoder {
     static SDImageFLIFCoder *coder;
@@ -168,6 +185,74 @@ static void FreeImageData(void *info, const void *data, size_t size) {
         duration = 100;
     }
     return duration / 1000.0;
+}
+
+#pragma mark - Progressive Decode
+
+- (BOOL)canIncrementalDecodeFromData:(NSData *)data {
+    return [[self class] isFLIFFormatForData:data];
+}
+
+- (instancetype)initIncrementalWithOptions:(SDImageCoderOptions *)options {
+    self = [super init];
+    if (self) {
+        _decoder = flif_create_decoder();
+        CGFloat scale = 1;
+        NSNumber *scaleFactor = options[SDImageCoderDecodeScaleFactor];
+        if (scaleFactor != nil) {
+            scale = [scaleFactor doubleValue];
+            if (scale < 1) {
+                scale = 1;
+            }
+        }
+        _scale = scale;
+    }
+    return self;
+}
+
+- (void)updateIncrementalData:(NSData *)data finished:(BOOL)finished {
+    if (_finished) {
+        return;
+    }
+    _imageData = data;
+    _finished = finished;
+    if (!_flifinfo) {
+        _flifinfo = flif_read_info_from_memory(data.bytes, data.length);
+    }
+}
+
+- (UIImage *)incrementalDecodedImageWithOptions:(SDImageCoderOptions *)options {
+    if (!_flifinfo) {
+        return nil;
+    }
+    size_t frameCount = flif_info_num_images(_flifinfo);
+    // supports only static FLIF progressive decoding
+    if (frameCount != 1) {
+        return nil;
+    }
+    int result = flif_decoder_decode_memory(_decoder, _imageData.bytes, _imageData.length);
+    if (!result) {
+        return nil;
+    }    
+    FLIF_IMAGE *flifimage = flif_decoder_get_image(_decoder, 0);
+    if (!flifimage) {
+        return nil;
+    }
+    
+    CGImageRef imageRef = [self sd_createFrameWithFLIFImage:flifimage];
+    if (!imageRef) {
+        return nil;
+    }
+    
+    CGFloat scale = _scale;
+#if SD_UIKIT || SD_WATCH
+    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:UIImageOrientationUp];
+#else
+    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:kCGImagePropertyOrientationUp];
+#endif
+    CGImageRelease(imageRef);
+    
+    return image;
 }
 
 #pragma mark - Encode

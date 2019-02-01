@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 static const SDImageFormat SDImageFormatFLIF = 14;
 
-@interface SDImageFLIFCoder : NSObject <SDImageCoder>
+@interface SDImageFLIFCoder : NSObject <SDProgressiveImageCoder>
 
 @property (nonatomic, class, readonly, nonnull) SDImageFLIFCoder *sharedCoder;
 
