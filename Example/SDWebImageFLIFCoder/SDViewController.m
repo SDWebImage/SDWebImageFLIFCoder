@@ -32,7 +32,7 @@
     [self.view addSubview:imageView1];
     [self.view addSubview:imageView2];
     
-    [imageView1 sd_setImageWithURL:staticFLIFURL completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+    [imageView1 sd_setImageWithURL:staticFLIFURL placeholderImage:nil options:SDWebImageProgressiveLoad completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         if (image) {
             NSLog(@"Static FLIF load success");
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
