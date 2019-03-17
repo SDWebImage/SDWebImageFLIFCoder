@@ -391,9 +391,11 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SDWebImageFLIFCoderExample-macOS/Pods-SDWebImageFLIFCoderExample-macOS-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SDWebImageFLIFCoderExample-macOS/Pods-SDWebImageFLIFCoderExample-macOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage-macOS/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImageFLIFCoder-macOS/SDWebImageFLIFCoder.framework",
+				"${BUILT_PRODUCTS_DIR}/libflif-macOS/libflif.framework",
+				"${BUILT_PRODUCTS_DIR}/libpng-macOS/libpng.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -401,10 +403,12 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImageFLIFCoder.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libflif.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libpng.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SDWebImageFLIFCoderExample-macOS/Pods-SDWebImageFLIFCoderExample-macOS-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SDWebImageFLIFCoderExample-macOS/Pods-SDWebImageFLIFCoderExample-macOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		57EB265E30475EBEE41D5ED4 /* [CP] Check Pods Manifest.lock */ = {
@@ -459,9 +463,11 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SDWebImageFLIFCoder_Example/Pods-SDWebImageFLIFCoder_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SDWebImageFLIFCoder_Example/Pods-SDWebImageFLIFCoder_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage-iOS/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImageFLIFCoder-iOS/SDWebImageFLIFCoder.framework",
+				"${BUILT_PRODUCTS_DIR}/libflif-iOS/libflif.framework",
+				"${BUILT_PRODUCTS_DIR}/libpng-iOS/libpng.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -469,10 +475,12 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImageFLIFCoder.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libflif.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libpng.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SDWebImageFLIFCoder_Example/Pods-SDWebImageFLIFCoder_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SDWebImageFLIFCoder_Example/Pods-SDWebImageFLIFCoder_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C984D60CCC32B75BD08DB650 /* [CP] Check Pods Manifest.lock */ = {
@@ -603,6 +611,15 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage-macOS/SDWebImage.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImageFLIFCoder-macOS/SDWebImageFLIFCoder.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libflif-macOS/libflif.framework/Headers\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/libpng-macOS/libpng.framework/Headers\"",
+					"$(inherited)",
+					"${PODS_ROOT}/libpng/",
+				);
 				INFOPLIST_FILE = "SDWebImageFLIFCoderExample-macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
