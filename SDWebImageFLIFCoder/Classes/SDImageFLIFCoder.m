@@ -86,6 +86,7 @@ static void FreeImageData(void *info, const void *data, size_t size) {
     
     int result = flif_decoder_decode_memory(decoder, [data bytes], [data length]);
     if (!result) {
+        flif_destroy_decoder(decoder);
         return nil;
     }
     
