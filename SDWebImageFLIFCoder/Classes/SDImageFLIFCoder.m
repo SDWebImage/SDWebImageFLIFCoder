@@ -12,6 +12,7 @@
 #import "flif.h"
 #endif
 #import <Accelerate/Accelerate.h>
+#include <dlfcn.h>
 
 #define SD_FOUR_CC(c1,c2,c3,c4) ((uint32_t)(((c4) << 24) | ((c3) << 16) | ((c2) << 8) | (c1)))
 
@@ -46,6 +47,16 @@ static void FreeImageData(void *info, const void *data, size_t size) {
     });
     return coder;
 }
+
+#if DEBUG
+// This is used to disable libflif's verbose output during DEBUG (verbose = 10)
++ (void)initialize {
+    void (*increase_verbosity)(int) = dlsym(RTLD_SELF, "_Z18increase_verbosityi");
+    if (increase_verbosity) {
+        increase_verbosity(1 - 10);
+    }
+}
+#endif
 
 #pragma mark - Decode
 
