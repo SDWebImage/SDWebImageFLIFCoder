@@ -38,11 +38,7 @@ TODO: Add long description of the pod here.
   s.source_files = 'SDWebImageFLIFCoder/Classes/**/*', 'Vendor/libflif/include/*.h', 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.h'
   s.public_header_files = 'SDWebImageFLIFCoder/Classes/SDImageFLIFCoder.h', 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.h'
 
-  s.ios.vendored_libraries = 'Vendor/libflif/lib/ios/libflif.a'
-  s.osx.vendored_libraries = 'Vendor/libflif/lib/mac/libflif.a'
-  s.tvos.vendored_libraries = 'Vendor/libflif/lib/tvos/libflif.a'
-  s.watchos.vendored_libraries = 'Vendor/libflif/lib/watchos/libflif.a'
-
   s.libraries = 'c++'
   s.dependency 'SDWebImage/Core', '>= 5.0.0-beta4'
+  s.dependency 'libflif'
 end
