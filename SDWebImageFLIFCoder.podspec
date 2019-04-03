@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SDWebImageFLIFCoder'
-  s.version          = '0.2.0'
+  s.version          = '0.3.0'
   s.summary          = 'A FLIF(Free Lossless Image Format) coder plugin for SDWebImage.'
 
 # This description is used to generate tags and improve search results.
