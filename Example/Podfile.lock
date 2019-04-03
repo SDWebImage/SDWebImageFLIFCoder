@@ -2,10 +2,10 @@ PODS:
   - libflif (0.3):
     - libpng
   - libpng (1.6.35)
-  - SDWebImage/Core (5.0.0-beta6)
-  - SDWebImageFLIFCoder (0.1.1):
+  - SDWebImage/Core (5.0.0)
+  - SDWebImageFLIFCoder (0.2.0):
     - libflif
-    - SDWebImage/Core (>= 5.0.0-beta4)
+    - SDWebImage/Core (~> 5.0)
 
 DEPENDENCIES:
   - SDWebImageFLIFCoder (from `../`)
@@ -23,8 +23,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   libflif: 3cd667f03edea266d62ef175347614fc547dcaf8
   libpng: c490b0523e94f78697f83ad434fbaf715050e15b
-  SDWebImage: 2840a50a41156efccf460df67218b32029177897
-  SDWebImageFLIFCoder: c1b8404302e7d6bdb7172ba9a64611f7d6f2518c
+  SDWebImage: 5de80a0302de9e377e62f47d2fa1304efff0e55f
+  SDWebImageFLIFCoder: 0c7c35e1dfe8600084306a29780b97e85eb7d048
 
 PODFILE CHECKSUM: dc66a94f7dffebb742dc5e75405c3c3219ddf107
 

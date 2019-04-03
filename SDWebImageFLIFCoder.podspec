@@ -39,6 +39,6 @@ TODO: Add long description of the pod here.
   s.public_header_files = 'SDWebImageFLIFCoder/Classes/SDImageFLIFCoder.h', 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.h'
 
   s.libraries = 'c++'
-  s.dependency 'SDWebImage/Core', '>= 5.0.0-beta4'
+  s.dependency 'SDWebImage/Core', '~> 5.0'
   s.dependency 'libflif'
 end

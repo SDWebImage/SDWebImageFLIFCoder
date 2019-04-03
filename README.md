@@ -32,7 +32,7 @@ pod 'SDWebImageFLIFCoder'
 
 #### Carthage
 
-SDWebImageFLIFCoder is available through [Carthage](https://github.com/Carthage/Carthage). Which use libFLIF as dynamic framework.
+SDWebImageFLIFCoder is available through [Carthage](https://github.com/Carthage/Carthage). Which use libflif as dynamic framework.
 
 ```
 github "SDWebImage/SDWebImageFLIFCoder"
