@@ -14,10 +14,11 @@ This FLIF coder plugin support static FLIF and animated FLIF image decoding and 
 
 ## Requirements
 
-+ iOS 8.0
-+ macOS 10.10
++ iOS 9.0
++ macOS 10.11
 + tvOS 9.0
 + watchOS 2.0
++ Xcode 11
 
 ## Installation
 

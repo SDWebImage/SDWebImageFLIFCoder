@@ -28,8 +28,8 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/SDWebImage/SDWebImageFLIFCoder.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
-  s.osx.deployment_target = '10.10'
+  s.ios.deployment_target = '9.0'
+  s.osx.deployment_target = '10.11'
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'
 
@@ -39,6 +39,6 @@ TODO: Add long description of the pod here.
   s.public_header_files = 'SDWebImageFLIFCoder/Classes/SDImageFLIFCoder.h', 'SDWebImageFLIFCoder/Module/SDWebImageFLIFCoder.h'
 
   s.libraries = 'c++'
-  s.dependency 'SDWebImage/Core', '~> 5.0'
+  s.dependency 'SDWebImage/Core', '~> 5.10'
   s.dependency 'libflif'
 end

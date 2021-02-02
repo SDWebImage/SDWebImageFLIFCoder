@@ -2,16 +2,16 @@ PODS:
   - libflif (0.3):
     - libpng
   - libpng (1.6.35)
-  - SDWebImage/Core (5.0.0)
-  - SDWebImageFLIFCoder (0.2.0):
+  - SDWebImage/Core (5.10.3)
+  - SDWebImageFLIFCoder (0.3.0):
     - libflif
-    - SDWebImage/Core (~> 5.0)
+    - SDWebImage/Core (~> 5.10)
 
 DEPENDENCIES:
   - SDWebImageFLIFCoder (from `../`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - libflif
     - libpng
     - SDWebImage
@@ -23,9 +23,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   libflif: 3cd667f03edea266d62ef175347614fc547dcaf8
   libpng: c490b0523e94f78697f83ad434fbaf715050e15b
-  SDWebImage: 5de80a0302de9e377e62f47d2fa1304efff0e55f
-  SDWebImageFLIFCoder: 0c7c35e1dfe8600084306a29780b97e85eb7d048
+  SDWebImage: e378178472b735e84b007bfb55514c97948a0598
+  SDWebImageFLIFCoder: e96bde42eaad74c775e4cc2bed3a558543f0cf55
 
-PODFILE CHECKSUM: dc66a94f7dffebb742dc5e75405c3c3219ddf107
+PODFILE CHECKSUM: 1fac428bdc53547286c6199ab3af24c8126e1e1d
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.8.4
