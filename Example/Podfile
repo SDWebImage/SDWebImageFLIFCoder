@@ -1,7 +1,7 @@
 use_frameworks!
 
 target 'SDWebImageFLIFCoder_Example' do
-  platform :ios, '8.0'
+  platform :ios, '9.0'
   pod 'SDWebImageFLIFCoder', :path => '../'
 
   target 'SDWebImageFLIFCoder_Tests' do
@@ -12,6 +12,6 @@ target 'SDWebImageFLIFCoder_Example' do
 end
 
 target 'SDWebImageFLIFCoderExample-macOS' do
-  platform :osx, '10.10'
+  platform :osx, '10.11'
   pod 'SDWebImageFLIFCoder', :path => '../'
 end
